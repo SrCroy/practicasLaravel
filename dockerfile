@@ -1,27 +1,20 @@
 FROM php:8.2-apache
 
-# Extensiones del sistema necesarias para Composer y ZIP
+# Instalar extensiones necesarias
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev \
-  && docker-php-ext-install pdo pdo_mysql mysqli zip \
-  && rm -rf /var/lib/apt/lists/*
+    git unzip libpng-dev libonig-dev libxml2-dev zip curl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
-
-# Permitir .htaccess y acceso en /var/www/html
-RUN printf "<Directory /var/www/html>\nOptions Indexes FollowSymLinks\nAllowOverride All\nRequire all granted\n</Directory>\n" \
-  > /etc/apache2/conf-available/z-override.conf \
-  && a2enconf z-override
-
-# Instalar Composer (desde la imagen oficial)
+# Instalar Composer globalmente
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Opcional: evitar advertencias si ejecutas como root dentro del contenedor
-ENV COMPOSER_ALLOW_SUPERUSER=1
+# Activar mod_rewrite y configuración
+RUN a2enmod rewrite
 
-# Opcional: subir el memory_limit para instalaciones grandes
-RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini
+# Configurar permisos y acceso a /var/www/html
+RUN printf "<Directory /var/www/html>\nOptions Indexes FollowSymLinks\nAllowOverride All\nRequire all granted\n</Directory>\n" \
+    > /etc/apache2/conf-available/z-laravel.conf \
+    && a2enconf z-laravel
 
 WORKDIR /var/www/html
 EXPOSE 80
