@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>@yield('tittle', 'Mi aplicacion')</title>
 </head>
-<body>
+<body class="container">
     <header>
         @yield('header')
     </header>
-    <main>
+    <main class="row">
         @yield('content')
         <div class="alert alert-info">
             <p>Buenas</p>
